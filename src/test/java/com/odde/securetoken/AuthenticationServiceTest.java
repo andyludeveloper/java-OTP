@@ -1,17 +1,22 @@
 package com.odde.securetoken;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class AuthenticationServiceTest {
 
     Profile stubProfile = mock(Profile.class);
     MyToken stubToken = mock(MyToken.class);
-    AuthenticationService target = new AuthenticationService(stubProfile, stubToken);
+    MyLogger mockLogger = mock(MyLogger.class);
+
+    AuthenticationService target = new AuthenticationService(stubProfile, stubToken, mockLogger);
 
     @Test
     public void is_valid_test() {
@@ -19,6 +24,20 @@ public class AuthenticationServiceTest {
         givenToken("000000");
 
         shouldBeValid("joey", "91000000");
+    }
+
+    @Test
+    public void should_log_account_when_invalid() {
+        givenProfile("joey", "91");
+        givenToken("000000");
+
+        target.isValid("joey", "wrong password");
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(mockLogger).save(captor.capture());
+
+        String message = captor.getValue();
+        assertThat(message).contains("joey", "login failed");
     }
 
     private void shouldBeValid(String account, String password) {

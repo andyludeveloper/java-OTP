@@ -4,10 +4,12 @@ public class AuthenticationService {
 
     private Profile profile;
     private MyToken myToken;
+    private MyLogger logger;
 
-    public AuthenticationService(Profile profile, MyToken myToken) {
+    public AuthenticationService(Profile profile, MyToken myToken, MyLogger mockLogger) {
         this.profile = profile;
         this.myToken = myToken;
+        this.logger = mockLogger;
     }
 
     public AuthenticationService() {
@@ -29,6 +31,7 @@ public class AuthenticationService {
         if (isValid) {
             return true;
         } else {
+            logger.save(String.format("account: %s try to login failed", account));
             return false;
         }
     }
