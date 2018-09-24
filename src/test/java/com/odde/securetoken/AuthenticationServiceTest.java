@@ -8,7 +8,8 @@ public class AuthenticationServiceTest {
 
     @Test
     public void is_valid_test() {
-        AuthenticationService target = new AuthenticationService();
+//        AuthenticationService target = new AuthenticationService();
+        AuthenticationService target = new AuthenticationService(new StubProfile(), new StubMyToken());
 
         boolean actual = target.isValid("joey", "91000000");
 
@@ -16,3 +17,4 @@ public class AuthenticationServiceTest {
     }
 
 }
+
