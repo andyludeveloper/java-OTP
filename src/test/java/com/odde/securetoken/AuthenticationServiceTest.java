@@ -9,20 +9,28 @@ import static org.mockito.Mockito.when;
 
 public class AuthenticationServiceTest {
 
+    Profile stubProfile = mock(Profile.class);
+    MyToken stubToken = mock(MyToken.class);
+    AuthenticationService target = new AuthenticationService(stubProfile, stubToken);
+
     @Test
     public void is_valid_test() {
-        Profile stubProfile = mock(Profile.class);
-        when(stubProfile.getPassword("joey")).thenReturn("91");
+        givenProfile("joey", "91");
+        givenToken("000000");
 
-        MyToken stubToken = mock(MyToken.class);
-        when(stubToken.getRandom(anyString())).thenReturn("000000");
+        shouldBeValid("joey", "91000000");
+    }
 
-        AuthenticationService target = new AuthenticationService(stubProfile, stubToken);
-//        AuthenticationService target = new AuthenticationService(new StubProfile(), new StubMyToken());
+    private void shouldBeValid(String account, String password) {
+        assertTrue(target.isValid(account, password));
+    }
 
-        boolean actual = target.isValid("joey", "91000000");
+    private void givenToken(String random) {
+        when(stubToken.getRandom(anyString())).thenReturn(random);
+    }
 
-        assertTrue(actual);
+    private void givenProfile(String account, String password) {
+        when(stubProfile.getPassword(account)).thenReturn(password);
     }
 
 }
