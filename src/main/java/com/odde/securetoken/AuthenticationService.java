@@ -6,10 +6,10 @@ public class AuthenticationService {
     private MyToken myToken;
     private MyLogger logger;
 
-    public AuthenticationService(Profile profile, MyToken myToken, MyLogger mockLogger) {
+    public AuthenticationService(Profile profile, MyToken myToken, MyLogger logger) {
         this.profile = profile;
         this.myToken = myToken;
-        this.logger = mockLogger;
+        this.logger = logger;
     }
 
     public AuthenticationService() {
