@@ -1,8 +1,8 @@
 package com.odde.securetoken;
 
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
+import static com.odde.securetoken.AssertHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -54,11 +54,12 @@ public class AuthenticationServiceTest {
     }
 
     private void shouldLogWithKeyWords(String account, String action) {
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(mockLogger).save(captor.capture());
+        verify(mockLogger).save(should(str -> assertThat(str).contains(account, action)));
 
-        String message = captor.getValue();
-        assertThat(message).contains(account, action);
+//        verify(mockLogger).save(captor.capture());
+//
+//        String message = captor.getValue();
+//        assertThat(message).contains(account, action);
     }
 
     private void shouldBeValid(String account, String password) {
