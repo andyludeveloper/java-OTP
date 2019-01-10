@@ -6,9 +6,7 @@ import org.mockito.ArgumentCaptor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AuthenticationServiceTest {
 
@@ -33,11 +31,16 @@ public class AuthenticationServiceTest {
 
         target.isValid("joey", "wrong password");
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(mockLogger).save(captor.capture());
+        // normal mock assertion
+        verify(mockLogger, times(1))
+                .save(argThat(argument -> argument.contains("joey") && argument.contains("login failed")));
 
-        String message = captor.getValue();
-        assertThat(message).contains("joey", "login failed");
+        // capture mock object interactive argument for assertion
+//        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+//        verify(mockLogger).save(captor.capture());
+//
+//        String message = captor.getValue();
+//        assertThat(message).contains("joey", "login failed");
     }
 
     private void shouldBeValid(String account, String password) {
@@ -51,6 +54,5 @@ public class AuthenticationServiceTest {
     private void givenProfile(String account, String password) {
         when(stubProfile.getPassword(account)).thenReturn(password);
     }
-
 }
 
