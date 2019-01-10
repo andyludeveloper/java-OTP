@@ -24,6 +24,5 @@ public class AuthenticationServiceTest {
 
         assertTrue(actual);
     }
-
 }
 
