@@ -28,7 +28,8 @@ public class AuthenticationService {
 
         if (isValid) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
