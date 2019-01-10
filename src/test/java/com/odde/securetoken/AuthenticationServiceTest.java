@@ -32,6 +32,5 @@ public class AuthenticationServiceTest {
     private void givenProfile(String account, String password) {
         when(stubProfile.getPassword(account)).thenReturn(password);
     }
-
 }
 
