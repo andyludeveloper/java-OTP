@@ -3,10 +3,12 @@ package com.odde.securetoken;
 public class AuthenticationService {
     private IProfile _profile;
     private IToken _token;
+    private ILogger _logger;
 
-    AuthenticationService(IProfile profile, IToken token){
+    AuthenticationService(IProfile profile, IToken token, ILogger logger){
         _profile = profile;
         _token = token;
+        _logger = logger;
     }
 
     AuthenticationService(){
@@ -27,6 +29,7 @@ public class AuthenticationService {
         if (isValid) {
             return true;
         } else {
+            _logger.save("account: "+account+", try to login failed.");
             return false;
         }
     }

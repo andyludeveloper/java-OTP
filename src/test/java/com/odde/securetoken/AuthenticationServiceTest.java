@@ -5,13 +5,13 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AuthenticationServiceTest {
-    private ProfileDao _profile = mock(ProfileDao.class);
-    private RsaTokenDao _token = mock(RsaTokenDao.class);
-    private AuthenticationService _target = new AuthenticationService(_profile, _token);
+    private final ProfileDao _profile = mock(ProfileDao.class);
+    private final RsaTokenDao _token = mock(RsaTokenDao.class);
+    private final ILogger _logger = mock(ILogger.class);
+    private final AuthenticationService _target = new AuthenticationService(_profile, _token, _logger);
 
     @Test
     public void is_valid() {
@@ -33,13 +33,24 @@ public class AuthenticationServiceTest {
 
         givenToken("1111");
 
-        shouldBeInvalid("andy", "wrong answer");
+        boolean actual = _target.isValid("andy", "wrong answer");
+        assertFalse(actual);
+    }
+    @Test
+    public void should_log_account_when_invalid() {
+        whenInvalid();
+        shouldSaveLog("andy", "login failed");
     }
 
-    private void shouldBeInvalid(String account, String password) {
-        _target = new AuthenticationService(_profile, _token);
-        boolean actual = _target.isValid(account, password);
-        assertFalse(actual);
+    private void shouldSaveLog(String account, String state) {
+        verify(_logger, times(1)).save(argThat(argument -> argument.contains(account)
+                &&argument.contains(state)));
+    }
+
+    private void whenInvalid() {
+        givenPassword("andy", "0000");
+        givenToken("1111");
+        _target.isValid("andy", "wrong answer");
     }
 
     private void givenToken(String token) {
