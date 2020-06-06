@@ -16,9 +16,7 @@ public class AuthenticationServiceTest {
     @Test
     public void is_valid() {
         givenPassword("andy", "0000");
-
         givenToken("1111");
-
         shouldBeValid("andy", "00001111");
     }
 
@@ -30,12 +28,15 @@ public class AuthenticationServiceTest {
     @Test
     public void is_invalid() {
         givenPassword("andy", "0000");
-
         givenToken("1111");
+        shouldBeInvalid("andy");
+    }
 
-        boolean actual = _target.isValid("andy", "wrong answer");
+    private void shouldBeInvalid(String account) {
+        boolean actual = _target.isValid(account, "wrong answer");
         assertFalse(actual);
     }
+
     @Test
     public void should_log_account_when_invalid() {
         whenInvalid();
