@@ -2,93 +2,54 @@ package com.odde.securetoken;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class AuthenticationServiceTest {
+    private ProfileDao _profile = mock(ProfileDao.class);
+    private RsaTokenDao _token = mock(RsaTokenDao.class);
+    private AuthenticationService _target = new AuthenticationService(_profile, _token);
 
     @Test
-    public void is_valid_test() {
-        AuthenticationService target = new AuthenticationService(new FakeProfile(), new FakeToken());
+    public void is_valid() {
+        givenPassword("andy", "0000");
 
-        boolean actual = target.isValid("andy", "00001111");
+        givenToken("1111");
 
+        shouldBeValid("andy", "00001111");
+    }
+
+    private void shouldBeValid(String account, String password) {
+        boolean actual = _target.isValid(account, password);
         assertTrue(actual);
     }
+
     @Test
-    public void is_valid_test2() {
-        AuthenticationService target = new AuthenticationService(new FakeProfile2(), new FakeToken2());
+    public void is_invalid() {
+        givenPassword("andy", "0000");
 
-        boolean actual = target.isValid("andy", "00001111");
+        givenToken("1111");
 
-        assertTrue(actual);
+        shouldBeInvalid("andy", "wrong answer");
     }
-    @Test
-    public void is_valid_test3() {
-        IProfile profile = mock(IProfile.class);
-        when(profile.getPassword("andy")).thenReturn("0000");
 
-        IToken token = mock(IToken.class);
-        when(token.getRandom(anyString())).thenReturn("1111");
-
-        AuthenticationService target = new AuthenticationService(profile, token);
-
-        boolean actual = target.isValid("andy", "00001111");
-
-        assertTrue(actual);
+    private void shouldBeInvalid(String account, String password) {
+        _target = new AuthenticationService(_profile, _token);
+        boolean actual = _target.isValid(account, password);
+        assertFalse(actual);
     }
-    @Test
-    public void is_valid_test4() {
-        ProfileDao profile = mock(ProfileDao.class);
-        when(profile.getPassword("andy")).thenReturn("0000");
 
-        RsaTokenDao token = mock(RsaTokenDao.class);
-        when(token.getRandom(anyString())).thenReturn("1111");
+    private void givenToken(String token) {
 
-        AuthenticationService target = new AuthenticationService(profile, token);
-
-        boolean actual = target.isValid("andy", "00001111");
-
-        assertTrue(actual);
+        when(_token.getRandom(anyString())).thenReturn(token);
     }
-}
 
- class FakeProfile implements IProfile{
+    private void givenPassword(String andy, String password) {
 
-    @Override
-    public String getPassword(String account) {
-        if(account.equals("andy"))
-            return "0000";
-        else
-            return "2222";
-    }
-}
-
- class FakeToken implements  IToken{
-
-    @Override
-    public String getRandom(String account) {
-        return "1111";
-    }
-}
-class FakeProfile2 extends ProfileDao{
-
-    @Override
-    public String getPassword(String account) {
-        if(account.equals("andy"))
-            return "0000";
-        else
-            return "2222";
-    }
-}
-
- class FakeToken2 extends RsaTokenDao{
-
-    @Override
-    public String getRandom(String account) {
-        return "1111";
+        when(_profile.getPassword(andy)).thenReturn(password);
     }
 }
 
